@@ -12,6 +12,11 @@ import java.io.IOException;
 @Slf4j
 public class ViewController {
 
+    @GetMapping("/")
+    public String root(){
+        return "redirect:/login";
+    }
+
     @GetMapping("/login")
     public String loginPage(){
         return "redirect:/html/client.html";
