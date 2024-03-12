@@ -11,6 +11,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * SimpleCaptcha jdk 버전이 낮아 직접 만들어 사용
+ */
 public class CaptchaServletUtil {
 
     public CaptchaServletUtil() {

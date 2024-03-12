@@ -28,6 +28,14 @@ import java.util.List;
 @Slf4j
 public class CaptchaService {
 
+    /**
+     * SimpleCaptcha 이미지 생성
+     * @param width 이미지 넓이
+     * @param height 이미지 높이
+     * @param fontsize 이미지 폰트 사이즈
+     * @param request 세션에 captcha 를 담기 위해 사용
+     * @param response 이미지를 저장하기 위해 사용
+     */
     public void getSimpleCaptcha(int width, int height, int fontsize, HttpServletRequest request, HttpServletResponse response) {
         try {
             //폰트설정 시작
@@ -62,6 +70,11 @@ public class CaptchaService {
     }
 
 
+    /**
+     * 구글 reCaptcha 검증 로직
+     * @param token 체크를 위해 생성되는 토큰
+     * @return 검증 성공/실패 여부
+     */
     public boolean checkReCaptcha(String token) {
         URL url;
         HttpURLConnection connection = null;
@@ -126,6 +139,12 @@ public class CaptchaService {
         return flag;
     }
 
+    /**
+     * SimpleCaptcha 검증 로직
+     * @param answer 사용자가 입력한 SimpleCaptcha 번호
+     * @param request 세션에서 captcha 를 가져오기 위해 사용
+     * @return 검증 성공/실패 여부
+     */
     public boolean checkSimpleCaptcha(String answer, HttpServletRequest request) {
         boolean flag = false;
 
