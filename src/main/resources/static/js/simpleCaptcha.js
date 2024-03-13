@@ -36,6 +36,8 @@ function captchaCheck(){
         success:function (data){
             console.log(data);
             if (data.status === 'OK'){
+                $("#captchaForm")[0].method = "POST"
+                $("#captchaForm")[0].action = data.action;
                 $("#captchaForm").submit();
             }else{
                 alert(data.message);
@@ -50,9 +52,9 @@ function captchaCheck(){
 }
 
 function getCaptcha(){
-    $("#captcha-div").css('display','');
     let rand = Math.random();
     $('#captcha').html('<a href="javascript:getCaptcha();"><img src="http://localhost:8080/captcha/simpleCaptcha?captW=120&captH=35&captF=35&rand='+rand+'"/></a>');
+    $("#captcha-div").css('display','');
 }
 
 window.onload = function () {
