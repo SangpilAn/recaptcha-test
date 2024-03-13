@@ -5,8 +5,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import test.recaptcha.service.CaptchaService;
 import test.recaptcha.dto.CaptchaResponse;
+import test.recaptcha.service.CaptchaService;
 
 @RestController
 @RequiredArgsConstructor
