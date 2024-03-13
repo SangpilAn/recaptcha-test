@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import test.recaptcha.service.CaptchaService;
-import test.recaptcha.vo.CaptchaResponse;
+import test.recaptcha.dto.CaptchaResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,9 +18,9 @@ public class CaptchaController {
 
     @GetMapping("/simpleCaptcha")
     public void simpleCaptcha(
-            @RequestParam int captW,
-            @RequestParam int captH,
-            @RequestParam int captF,
+            @RequestParam(required = false, defaultValue = "120") int captW,
+            @RequestParam(required = false, defaultValue = "35") int captH,
+            @RequestParam(required = false, defaultValue = "35") int captF,
             HttpServletRequest request,
             HttpServletResponse response
     ){
@@ -32,43 +32,17 @@ public class CaptchaController {
             @RequestParam(required = false, defaultValue = "") String captchaAnswer,
             HttpServletRequest request
     ){
-        String status = "";
-        String message = "";
-
-        if (captchaAnswer.equals("")){
-            status = "FAIL";
-            message = "captcha 번호를 입력하세요.";
-            log.error("captcha 번호를 입력하지 않음");
-        }else {
-            // simpleCaptcha 검증
-            if(captchaService.checkSimpleCaptcha(captchaAnswer, request)){
-                status = "OK";
-                message = "SimpleCaptcha 확인 완료";
-            }else {
-                status = "FAIL";
-                message = "번호를 다시 확인해주세요.";
-            }
-        }
-
-        return new CaptchaResponse(status, message);
+        log.info("Call simpleCaptchaCheck");
+        return captchaService.checkSimpleCaptcha(captchaAnswer, request);
     }
 
     @PostMapping("/check")
     public CaptchaResponse reCaptchaCheck(
-            @RequestParam String token
+            @RequestParam(required = false, defaultValue = "") String token,
+            HttpServletRequest request
     ){
-        String status = "";
-        String message = "";
-
-        if(captchaService.checkReCaptcha(token)){
-            status = "OK";
-            message = "성공";
-        }else {
-            status = "FAIL";
-            message = "실패";
-        }
-
-        return new CaptchaResponse(status, message);
+        log.info("Call reCaptchaCheck");
+        return captchaService.checkReCaptcha(token, request.getRemoteHost());
     }
 
 }
