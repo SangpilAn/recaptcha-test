@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import test.recaptcha.dto.CaptchaResponse;
+import test.recaptcha.dto.SimpleCaptchaInfo;
 import test.recaptcha.service.CaptchaService;
 
 @RestController
@@ -17,31 +18,29 @@ public class CaptchaController {
     private final CaptchaService captchaService;
 
     @GetMapping("/simpleCaptcha")
-    public void simpleCaptcha(
-            @RequestParam(required = false, defaultValue = "120") int captW,
-            @RequestParam(required = false, defaultValue = "35") int captH,
-            @RequestParam(required = false, defaultValue = "35") int captF,
+    public void getSimpleCaptcha(
+            @ModelAttribute SimpleCaptchaInfo simpleCaptchaInfo,
             HttpServletRequest request,
             HttpServletResponse response
     ){
-        captchaService.getSimpleCaptcha(captW, captH, captF, request, response);
+        captchaService.getSimpleCaptcha(simpleCaptchaInfo, request, response);
     }
 
     @PostMapping("/simpleCaptcha/check")
-    public CaptchaResponse simpleCaptchaCheck(
+    public CaptchaResponse checkSimpleCaptcha(
             @RequestParam(required = false, defaultValue = "") String captchaAnswer,
             HttpServletRequest request
     ){
-        log.info("Call simpleCaptchaCheck");
+        log.info("Call checkSimpleCaptcha");
         return captchaService.checkSimpleCaptcha(captchaAnswer, request);
     }
 
     @PostMapping("/check")
-    public CaptchaResponse reCaptchaCheck(
+    public CaptchaResponse checkReCaptcha(
             @RequestParam(required = false, defaultValue = "") String token,
             HttpServletRequest request
     ){
-        log.info("Call reCaptchaCheck");
+        log.info("Call checkReCaptcha");
         return captchaService.checkReCaptcha(token, request.getRemoteHost());
     }
 

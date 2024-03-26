@@ -2,6 +2,7 @@ package test.recaptcha.service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.captcha.Captcha;
 import nl.captcha.backgrounds.GradiatedBackgroundProducer;
@@ -13,6 +14,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import test.recaptcha.dto.CaptchaResponse;
 import test.recaptcha.dto.ReCaptchaJsonObject;
+import test.recaptcha.dto.SimpleCaptchaInfo;
 import test.recaptcha.util.CaptchaServletUtil;
 import test.recaptcha.util.ReCaptchaUtil;
 
@@ -22,17 +24,23 @@ import java.util.List;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CaptchaService {
+
+    private final ReCaptchaUtil reCaptchaUtil;
 
     /**
      * SimpleCaptcha 이미지 생성
-     * @param width 이미지 넓이
-     * @param height 이미지 높이
-     * @param fontsize 이미지 폰트 사이즈
+     * @param simpleCaptchaInfo 넓이, 높이, 폰트 사이즈 값을 받아오는 객체
      * @param request 세션에 captcha 를 담기 위해 사용
      * @param response 이미지를 저장하기 위해 사용
      */
-    public void getSimpleCaptcha(int width, int height, int fontsize, HttpServletRequest request, HttpServletResponse response) {
+    public void getSimpleCaptcha(SimpleCaptchaInfo simpleCaptchaInfo, HttpServletRequest request, HttpServletResponse response) {
+
+        int fontsize = simpleCaptchaInfo.getFontsize();
+        int width = simpleCaptchaInfo.getWidth();
+        int height = simpleCaptchaInfo.getHeight();
+
         try {
             //폰트설정 시작
             List<Font> fontList = new ArrayList<>();
@@ -80,14 +88,19 @@ public class CaptchaService {
         ReCaptchaJsonObject object = requestReCaptchaValidate(token, ip);
 
         if (object.getSuccess()){
-            if (object.getScore() >= ReCaptchaUtil.SCORE){
+            if (object.getScore() >= reCaptchaUtil.SCORE){
                 log.debug("reCaptcha 통과 : score={}", object.getScore());
                 return new CaptchaResponse("OK", "검증 성공", true);
             }else {
-                log.error("reCaptcha 점수 미달 : score={}, baseScore={}", object.getScore(), ReCaptchaUtil.SCORE);
+                log.error("reCaptcha 점수 미달 : score={}, baseScore={}", object.getScore(), reCaptchaUtil.SCORE);
                 return new CaptchaResponse("FAIL", "점수 미달로 통과하지 못했습니다.", false);
             }
         }else {
+            //Error code log 처리
+            if (object.getErrorCodes().length > 0){
+                log.error("GoogleReCaptcha Validation Fail => messages={}", reCaptchaUtil.errorCheck(object.getErrorCodes()));
+            }
+
             return new CaptchaResponse("FAIL", "요청에 실패했습니다.", false);
         }
     }
@@ -99,15 +112,15 @@ public class CaptchaService {
      * @return 응답 파싱 후 객체로 반환
      */
     private ReCaptchaJsonObject requestReCaptchaValidate(String token, String ip) {
-        ReCaptchaJsonObject object = null;
+        ReCaptchaJsonObject object;
         RestTemplate restTemplate = new RestTemplate();
-        String queryParam = "?secret=" + ReCaptchaUtil.SECRET_KEY + "&response=" + token + "&remoteip=" + ip;
+        String queryParam = "?secret=" + reCaptchaUtil.SECRET_KEY + "&response=" + token + "&remoteip=" + ip;
 
         try {
-            object = restTemplate.postForObject(ReCaptchaUtil.URL + queryParam, null, ReCaptchaJsonObject.class);
+            object = restTemplate.postForObject(reCaptchaUtil.URL + queryParam, null, ReCaptchaJsonObject.class);
         }catch (RestClientException e){
-            log.error("요청 실패 : message={}", e.getMessage());
-            object = new ReCaptchaJsonObject(false, 0, "요청 실패");
+            log.error("GoogleReCaptcha Request Fail => message={}", e.getMessage());
+            object = new ReCaptchaJsonObject(false, 0, new String[]{});
         }
 
         return object;

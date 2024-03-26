@@ -10,6 +10,7 @@ function init(){
         });
     }catch (e){
         getCaptcha();
+        reCaptchaYN = false;
     }
 }
 
@@ -18,6 +19,8 @@ function captchaCheck(){
     if (!reCaptchaYN){
         url = "http://localhost:8080/captcha/simpleCaptcha/check"
     }
+
+    $("#captchaAnswer").val($("#userAnswer").val());
     let formData = $("#captchaForm").serialize();
 
     $.ajax({
@@ -36,11 +39,12 @@ function captchaCheck(){
         success:function (data){
             console.log(data);
             if (data.status === 'OK'){
-                $("#captchaForm")[0].method = "POST"
-                $("#captchaForm")[0].action = data.action;
-                $("#captchaForm").submit();
+                $("#loginForm")[0].method = "POST"
+                $("#loginForm")[0].action = data.action;
+                $("#loginForm").submit();
             }else{
-                alert(data.message);
+                alert(data.message + "\n보안 문자를 입력해주세요.");
+                reCaptchaYN = false;
                 getCaptcha();
             }
         },
@@ -53,7 +57,7 @@ function captchaCheck(){
 
 function getCaptcha(){
     let rand = Math.random();
-    $('#captcha').html('<a href="javascript:getCaptcha();"><img src="http://localhost:8080/captcha/simpleCaptcha?captW=120&captH=35&captF=35&rand='+rand+'"/></a>');
+    $('#captcha').html('<a href="javascript:getCaptcha();"><img src="http://localhost:8080/captcha/simpleCaptcha?rand='+rand+'"/></a>');
     $("#captcha-div").css('display','');
 }
 

@@ -9,15 +9,18 @@
 </head>
 <body>
 심플캡챠 테스트
-<form name="captchaForm" id="captchaForm">
-    <input type="hidden" name="token" id="captchaToken">
+<form name="loginForm" id="loginForm">
     <div>ID : <input type="text" name="id"></div>
     <div>PW : <input type="password" name="pw"></div>
     <div id="captcha-div" style="display: none">
         <div id="captcha"></div>
-        <div>SimpleCaptcha : <input type="text" name="captchaAnswer"></div>
+        <div>SimpleCaptcha : <input type="text" name="userAnswer" id="userAnswer"></div>
     </div>
     <div><input id="button" type="button" value="제출" onclick="captchaCheck()"></div>
+</form>
+<form name="captchaForm" id="captchaForm">
+    <input type="hidden" name="token" id="captchaToken">
+    <input type="hidden" name="captchaAnswer" id="captchaAnswer">
 </form>
 </body>
 </html>
