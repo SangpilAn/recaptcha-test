@@ -6,16 +6,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
 public class SimpleCaptchaInfo {
 
-    @Builder.Default
-    private int width = 120;
-    @Builder.Default
-    private int height = 35;
-    @Builder.Default
-    private int fontsize = 35;
+    private int width;
+    private int height;
+    private int fontsize;
+
+    public SimpleCaptchaInfo() {
+        this.width = 120;
+        this.height = 35;
+        this.fontsize = 35;
+    }
 
     public SimpleCaptchaInfo(int width, int height, int fontsize) {
         this.width = width;

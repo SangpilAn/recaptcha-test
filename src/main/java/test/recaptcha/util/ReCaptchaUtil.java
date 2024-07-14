@@ -1,5 +1,6 @@
 package test.recaptcha.util;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -9,14 +10,21 @@ import java.util.Map;
 
 @Component
 public class ReCaptchaUtil {
-    // properties 로 관리할 예정
-    public final String URL = "https://www.google.com/recaptcha/api/siteverify";
-    public final String SECRET_KEY = "6Lca15MpAAAAAASCChhnZzy608hlb9CmlVWJ-18w";
-    public final Double SCORE = 0.5;
+
+    public final String URL;
+    public final String SECRET_KEY;
+    public final Double SCORE;
 
     private final Map<String, String> errorMap;
 
-    public ReCaptchaUtil() {
+    public ReCaptchaUtil(
+            @Value("${recaptcha.url}") String url,
+            @Value("${recaptcha.secret.key}") String secretKey,
+            @Value("${recaptcha.score}") Double score
+    ) {
+        this.URL = url;
+        SECRET_KEY = secretKey;
+        SCORE = score;
         this.errorMap = initErrorMap();
     }
 
