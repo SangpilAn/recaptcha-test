@@ -15,9 +15,9 @@ function init(){
 }
 
 function captchaCheck(){
-    let url = "http://localhost:8080/captcha/check"
+    let url = "/captcha/check"
     if (!reCaptchaYN){
-        url = "http://localhost:8080/captcha/simpleCaptcha/check"
+        url = "/captcha/simpleCaptcha/check"
     }
 
     $("#captchaAnswer").val($("#userAnswer").val());
@@ -57,7 +57,7 @@ function captchaCheck(){
 
 function getCaptcha(){
     let rand = Math.random();
-    $('#captcha').html('<a href="javascript:getCaptcha();"><img src="http://localhost:8080/captcha/simpleCaptcha?rand='+rand+'"/></a>');
+    $('#captcha').html('<a href="javascript:getCaptcha();"><img src="/captcha/simpleCaptcha?rand='+rand+'"/></a>');
     $("#captcha-div").css('display','');
 }
 

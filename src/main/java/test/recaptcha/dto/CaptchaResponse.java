@@ -15,7 +15,7 @@ public class CaptchaResponse {
         this.message = message;
         if (pass){
             // login.fcc 를 검증 성공 시 주입
-            action = "http://localhost:8080/login";
+            action = "/login";
         }else {
             action = "";
         }
